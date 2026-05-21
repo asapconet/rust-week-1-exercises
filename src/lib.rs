@@ -1,12 +1,9 @@
 use std::collections::HashMap;
 
 // Name Assignment (variables and constants)
-// TODO: Assign the current bitcoin mining reward
-pub const MINING_REWARD: f64 = 0.0;
-// TODO: Assign the current block height
-pub const CURRENT_BLOCK_HEIGHT: u64 = 0;
-// TODO: Assign the number of satoshis in one Bitcoin
-pub const BTC_TO_SATS: u64 = 0;
+pub const MINING_REWARD: f64 = 5.5;
+pub const CURRENT_BLOCK_HEIGHT: u64 = 100000;
+pub const BTC_TO_SATS: u64 = 10000000;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Utxo {
@@ -17,20 +14,21 @@ pub struct Utxo {
 
 /// Calculate the total Bitcoin reward for a given number of mined blocks.
 pub fn calculate_total_reward(blocks_mined: u64) -> f64 {
-    // TODO: Multiply blocks_mined by MINING_REWARD and return result
-    todo!()
+    blocks_mined as f64 * MINING_REWARD
 }
 
 /// Return true if the transaction fee is between 0.00001 and 0.01 BTC.
 pub fn is_valid_tx_fee(fee: f64) -> bool {
-    // TODO: Check if fee is between 0.00001 and 0.01 BTC (inclusive)
-    todo!()
+    if fee >= 0.00001 && fee <= 0.01 {
+        true
+    } else {
+        false
+    }
 }
 
 /// Return true if the wallet balance is greater than 50.0 BTC.
 pub fn is_large_balance(balance: f64) -> bool {
-    // TODO: Compare balance to 50.0 and return result
-    todo!()
+    balance > 50.0
 }
 
 /// Return the priority of a transaction ("high", "medium", "low") based on fee rate.
