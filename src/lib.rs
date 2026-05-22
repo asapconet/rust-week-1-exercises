@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 // Name Assignment (variables and constants)
-pub const MINING_REWARD: f64 = 5.5;
-pub const CURRENT_BLOCK_HEIGHT: u64 = 100000;
+pub const MINING_REWARD: f64 = 0.5;
+pub const CURRENT_BLOCK_HEIGHT: u64 = 900000;
 pub const BTC_TO_SATS: u64 = 10000000;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -33,45 +33,56 @@ pub fn is_large_balance(balance: f64) -> bool {
 
 /// Return the priority of a transaction ("high", "medium", "low") based on fee rate.
 pub fn tx_priority(size_bytes: u64, fee_btc: f64) -> &'static str {
-    // TODO: Calculate fee rate (fee_btc / size_bytes) and use if/else if/else
+    let calculated_value = fee_btc / size_bytes as f64;
+
+    if calculated_value > 0.00005 {
+        "high"
+    } else if calculated_value > 0.00001 {
+        "medium"
+    } else {
+        "low"
+    }
     // High: > 0.00005, Medium: > 0.00001, otherwise Low
-    todo!()
 }
 
 /// Return true if the network string equals "mainnet" (case-insensitive).
 pub fn is_mainnet(network: &str) -> bool {
-    // TODO: Convert network to lowercase and compare with "mainnet"
-    todo!()
+    network.to_lowercase() == "mainnet"
 }
 
 /// Return true if value is in the inclusive range 100..=200.
 pub fn is_in_range(value: i64) -> bool {
-    // TODO: Check if 100 <= value <= 200
-    todo!()
+    let result = 100 <= value && value <= 200;
+    result
 }
 
 /// Return true if both references point to the exact same object in memory.
 pub fn is_same_wallet<T>(wallet1: &T, wallet2: &T) -> bool {
-    // TODO: Use std::ptr::eq to compare reference identity
-    todo!()
+    let trans = std::ptr::eq(wallet1, wallet2);
+    trans
 }
 
 /// Normalize a Bitcoin address by trimming whitespace and lowercasing.
 pub fn normalize_address(address: &str) -> String {
-    // TODO: Trim leading/trailing whitespace and convert to lowercase
-    todo!()
+    let normalized_val = address.trim().to_lowercase();
+    normalized_val
 }
 
 /// Append a new UTXO to the list and return the updated list.
 pub fn add_utxo(utxos: Vec<Utxo>, new_utxo: Utxo) -> Vec<Utxo> {
-    // TODO: Push new_utxo into utxos and return it
-    todo!()
+    let mut updated_utxos = utxos;
+    updated_utxos.push(new_utxo);
+    updated_utxos
 }
 
 /// Find the first transaction with a fee greater than 0.005 BTC.
 pub fn find_high_fee(fee_list: &[f64]) -> Option<(usize, f64)> {
-    // TODO: Iterate with enumerate and return the first (index, fee) where fee > 0.005
-    todo!()
+    for (idx, &fee) in fee_list.iter().enumerate() {
+        if fee > 0.005 {
+            return Some((idx, fee));
+        }
+    }
+    None
 }
 
 /// Return basic wallet details as a tuple of (name, balance).
