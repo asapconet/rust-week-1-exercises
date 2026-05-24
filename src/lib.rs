@@ -87,14 +87,18 @@ pub fn find_high_fee(fee_list: &[f64]) -> Option<(usize, f64)> {
 
 /// Return basic wallet details as a tuple of (name, balance).
 pub fn get_wallet_details() -> (String, f64) {
-    // TODO: Return a tuple with wallet name and balance
-    todo!()
+    let wallet_name = String::from("satoshi_wallet");
+    let balance = 50.0;
+    (wallet_name, balance)
 }
 
 /// Get the status of a transaction from the mempool or "not found".
 pub fn get_tx_status(tx_pool: &HashMap<String, String>, txid: &str) -> String {
-    // TODO: Look up txid in tx_pool, returning the status or "not found"
-    todo!()
+    if let Some(status) = tx_pool.get(txid) {
+        status.clone()
+    } else {
+        String::from("not found")
+    }
 }
 
 /// Destructure wallet_info and format a status string.
