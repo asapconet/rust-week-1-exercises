@@ -1,9 +1,9 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::Read};
 
 // Name Assignment (variables and constants)
 pub const MINING_REWARD: f64 = 0.5;
-pub const CURRENT_BLOCK_HEIGHT: u64 = 900000;
-pub const BTC_TO_SATS: u64 = 10000000;
+pub const CURRENT_BLOCK_HEIGHT: u64 = 990000;
+pub const BTC_TO_SATS: u64 = 100000000;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Utxo {
@@ -52,8 +52,8 @@ pub fn is_mainnet(network: &str) -> bool {
 
 /// Return true if value is in the inclusive range 100..=200.
 pub fn is_in_range(value: i64) -> bool {
-    let result = 100 <= value && value <= 200;
-    result
+    let whatever = 100 <= value && value <= 200;
+    whatever
 }
 
 /// Return true if both references point to the exact same object in memory.
@@ -103,22 +103,37 @@ pub fn get_tx_status(tx_pool: &HashMap<String, String>, txid: &str) -> String {
 
 /// Destructure wallet_info and format a status string.
 pub fn unpack_wallet_info(wallet_info: (String, f64)) -> String {
-    // TODO: Destructure the tuple into (name, balance) and format the result
-    // Expected format: "Wallet <name> has balance: <balance> BTC"
-    todo!()
+    // the tuple destructuring
+    let (name, balance) = wallet_info;
+    format!("Wallet {} has balance: {} BTC", name, balance)
 }
 
 /// Convert BTC to satoshis (1 BTC = 100,000,000 sats).
 pub fn calculate_sats(btc: f64) -> u64 {
-    // TODO: Multiply btc by BTC_TO_SATS and return as u64
-    todo!()
+    (btc * BTC_TO_SATS as f64) as u64
 }
+
+use rand::{thread_rng, Rng};
 
 /// Generate a mock Bitcoin address of length 32 with the given prefix.
 pub fn generate_address(prefix: &str) -> String {
     // TODO: Build a random suffix of (32 - prefix.len()) chars from [a-z0-9]
     // TODO: Concatenate prefix + suffix and return
-    todo!()
+
+    // initial data for generating random suffix
+    let chars: Vec<char> = "asre233443sdsfa34322333".chars().collect();
+
+    // preset to generate random suffix [bond to the random number generator "rng"]
+    let mut rng = thread_rng();
+
+    // the random number generator
+    let suffix: String = (0..(32 - prefix.len()))
+        // to generate random characters from the character set [chars]
+        .map(|_| *chars.get(rng.gen_range(0..chars.len())).unwrap())
+        .collect();
+
+    // the concatenation
+    format!("{}{}", prefix, suffix)
 }
 
 /// Validate a Bitcoin block height. Returns (is_valid, message).
@@ -126,7 +141,14 @@ pub fn validate_block_height(height: i64) -> (bool, String) {
     // TODO: Check that height is not negative
     // TODO: Check that height is within a realistic range (<= 800_000)
     // TODO: Return (true, "Valid block height") otherwise
-    todo!()
+
+    if height < 0 {
+        return (false, "negative block height".to_string());
+    }
+    if height > 800000 {
+        return (false, "unrealistic block height -- too high".to_string());
+    }
+    (true, "Valid block height".to_string())
 }
 
 /// Compute the block reward (in sats) for each block height based on the halving schedule.
@@ -134,14 +156,37 @@ pub fn halving_schedule(blocks: &[u64]) -> HashMap<u64, u64> {
     // TODO: Base reward is 50 * 100_000_000 sats; halving interval is 210_000 blocks
     // TODO: For each block: halvings = block / 210_000; reward = base >> halvings
     // TODO: Insert (block, reward) into the result HashMap
-    todo!()
+
+    //initializations
+    let base_reward = 50 * 100_000_000;
+    let halving_interval = 210_000;
+
+    let mut result = HashMap::new();
+
+    for block in blocks {
+        let split_halving = block / halving_interval;
+        let reward = base_reward >> split_halving;
+
+        result.insert(*block, reward);
+    }
+
+    result
 }
 
 /// Find the UTXO with the smallest value that meets or exceeds target.
 pub fn find_utxo_with_min_value(utxos: &[Utxo], target: u64) -> Option<Utxo> {
     // TODO: Filter UTXOs to those with value >= target
     // TODO: Return the one with the smallest value, or None if none qualify
-    todo!()
+
+    //filtering out UTXOs with value < target
+    let filtered_utxos = utxos.iter().filter(|utxo| utxo.value >= target);
+
+    //finding the UTXO with the smallest value from the filtered list
+    if let Some(utxo) = filtered_utxos.min_by_key(|utxo| utxo.value) {
+        Some(utxo.clone())
+    } else {
+        None
+    }
 }
 
 /// Create a UTXO map from txid, vout, and arbitrary extra string fields.
@@ -152,10 +197,36 @@ pub fn create_utxo(
 ) -> HashMap<String, String> {
     // TODO: Build a base map with "txid" and "vout" (as string)
     // TODO: Merge extra into the base map and return
-    todo!()
+    //
+    let mut basse_map = HashMap::new();
+    basse_map.insert(String::from("txid"), txid.to_string());
+    basse_map.insert("vout".to_string(), vout.to_string());
+
+    // let mut merged = basse_map;
+    // let mut merged: HashMap<String, String> = basse_map.clone();
+    // merged.extend(extra);
+    // merged
+    basse_map.extend(extra);
+    basse_map
 }
 
 // Implement extract_tx_version function below
 pub fn extract_tx_version(raw_tx_hex: &str) -> Result<u32, String> {
-    todo!()
+    let transaction_bytes = hex::decode(raw_tx_hex).unwrap();
+
+    let mut byte_slice = transaction_bytes.as_slice();
+    let mut transmitter = [0; 4];
+
+    byte_slice.read(&mut transmitter).unwrap();
+    let transaction_version = u32::from_le_bytes(transmitter);
+
+    if transaction_bytes.len() < 200 {
+        return Err("Transaction data too short".to_string());
+    }
+
+    // if {
+    //     Err("")
+    // }
+
+    Ok(transaction_version)
 }
