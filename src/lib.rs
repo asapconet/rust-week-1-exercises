@@ -113,6 +113,7 @@ pub fn calculate_sats(btc: f64) -> u64 {
     (btc * BTC_TO_SATS as f64) as u64
 }
 
+use hex::FromHexError;
 use rand::{thread_rng, Rng};
 
 /// Generate a mock Bitcoin address of length 32 with the given prefix.
@@ -212,21 +213,16 @@ pub fn create_utxo(
 
 // Implement extract_tx_version function below
 pub fn extract_tx_version(raw_tx_hex: &str) -> Result<u32, String> {
-    let transaction_bytes = hex::decode(raw_tx_hex).unwrap();
+    let transaction_bytes = hex::decode(raw_tx_hex).map_err(|_| "Hex decode error".to_string())?;
 
-    let mut byte_slice = transaction_bytes.as_slice();
-    let mut transmitter = [0; 4];
-
-    byte_slice.read(&mut transmitter).unwrap();
-    let transaction_version = u32::from_le_bytes(transmitter);
-
-    if transaction_bytes.len() < 200 {
+    if transaction_bytes.len() < 4 {
         return Err("Transaction data too short".to_string());
     }
 
-    // if {
-    //     Err("")
-    // }
+    let mut transmitter = [0u8; 4];
+
+    transmitter.copy_from_slice(&transaction_bytes[0..4]);
+    let transaction_version = u32::from_le_bytes(transmitter);
 
     Ok(transaction_version)
 }
