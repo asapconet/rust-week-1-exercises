@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::Read};
+use std::collections::HashMap;
 
 // Name Assignment (variables and constants)
 pub const MINING_REWARD: f64 = 0.5;
@@ -113,7 +113,6 @@ pub fn calculate_sats(btc: f64) -> u64 {
     (btc * BTC_TO_SATS as f64) as u64
 }
 
-use hex::FromHexError;
 use rand::{thread_rng, Rng};
 
 /// Generate a mock Bitcoin address of length 32 with the given prefix.
