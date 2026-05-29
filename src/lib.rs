@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 // Name Assignment (variables and constants)
 pub const MINING_REWARD: f64 = 0.5;
-pub const CURRENT_BLOCK_HEIGHT: u64 = 990000;
-pub const BTC_TO_SATS: u64 = 100000000;
+pub const CURRENT_BLOCK_HEIGHT: u64 = 990_000;
+pub const BTC_TO_SATS: u64 = 100_000_000;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Utxo {
@@ -145,7 +145,7 @@ pub fn validate_block_height(height: i64) -> (bool, String) {
     if height < 0 {
         return (false, "negative block height".to_string());
     }
-    if height > 800000 {
+    if height > 800_000 {
         return (false, "unrealistic block height -- too high".to_string());
     }
     (true, "Valid block height".to_string())
